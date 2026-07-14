@@ -32,3 +32,6 @@ data/checkpoints/
 
 # NOTE: data/radar_cpsi.db is intentionally NOT ignored.
 # The SQLite database is versioned in the repository on purpose.
+
+# Harness / Claude Code artifacts
+.claude/
