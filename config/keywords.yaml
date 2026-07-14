@@ -1,0 +1,74 @@
+# ============================================================================
+# Configuração de palavras-chave do Radar CPSI
+# ============================================================================
+#
+# Regra de match (ver src/radar_cpsi/keywords.py):
+#   Um edital é considerado MATCH RELEVANTE somente se contiver:
+#     (1) pelo menos um termo do grupo `cpsi_signals`  (indica que é CPSI)
+#         E
+#     (2) pelo menos um termo do grupo `video_group`   (tema videomonitoramento)
+#
+# Os termos são comparados de forma:
+#   - insensível a maiúsculas/minúsculas
+#   - insensível a acentos (câmera == camera)
+#   - respeitando limites de palavra (evita casar "cameras" dentro de outra palavra)
+#
+# Para adicionar/remover termos, basta editar as listas abaixo — nada é hardcoded no código.
+# Termos com espaços são tratados como expressão exata (com espaçamento flexível).
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# Sinais de que o edital é um CPSI (Contrato Público para Solução Inovadora).
+# ---------------------------------------------------------------------------
+cpsi_signals:
+  - "CPSI"
+  - "contrato público para solução inovadora"
+  - "contratação pública para solução inovadora"
+  - "contratação de solução inovadora"
+  - "contrato público de solução inovadora"
+  - "solução inovadora"          # termo amplo — combinado com video_group reduz falso-positivo
+  - "lei complementar 182"
+  - "lei complementar nº 182"
+  - "lc 182"
+  - "marco legal das startups"
+  - "encomenda tecnológica"      # instrumento correlato de inovação (art. 20 Lei 10.973)
+
+# ---------------------------------------------------------------------------
+# Grupo de videomonitoramento / segurança pública inteligente.
+# ---------------------------------------------------------------------------
+video_group:
+  - "videomonitoramento"
+  - "vídeo monitoramento"
+  - "monitoramento por câmeras"
+  - "monitoramento por vídeo"
+  - "CFTV"
+  - "circuito fechado de televisão"
+  - "câmera"
+  - "câmeras"
+  - "câmera de segurança"
+  - "câmeras de segurança"
+  - "segurança pública inteligente"
+  - "cidade inteligente"
+  - "smart city"
+  - "videoanálise"
+  - "análise de vídeo"
+  - "analytics de vídeo"
+  - "reconhecimento facial"
+  - "leitura de placas"
+  - "OCR de placas"
+  - "LPR"
+
+# ---------------------------------------------------------------------------
+# Termos de busca enviados às APIs (consultas server-side).
+# São usados para reduzir o volume trazido das fontes ANTES do filtro local.
+# O filtro `cpsi_signals`+`video_group` acima ainda é aplicado sobre o resultado.
+# ---------------------------------------------------------------------------
+query_terms:
+  pncp:
+    - "solução inovadora"
+    - "CPSI"
+    - "contrato público para solução inovadora"
+  querido_diario:
+    - "\"solução inovadora\" videomonitoramento"
+    - "\"solução inovadora\" CFTV"
+    - "CPSI câmeras"

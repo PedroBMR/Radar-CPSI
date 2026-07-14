@@ -1,0 +1,53 @@
+name: Radar CPSI — coleta diária
+
+on:
+  schedule:
+    # ┌─ minuto (0)  ┌─ hora (UTC). 09:00 UTC = 06:00 horário de Brasília (UTC-3).
+    # Para mudar o horário, ajuste apenas a linha abaixo (formato cron, em UTC).
+    - cron: "0 9 * * *"
+  workflow_dispatch:      # permite rodar manualmente na aba Actions (para testes)
+
+# Necessário para o job conseguir commitar o banco atualizado de volta no repo.
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-cpsi-daily
+  cancel-in-progress: false
+
+jobs:
+  coleta:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Rodar coleta diária
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          PYTHONPATH=src python -m radar_cpsi.run_daily --days 3
+
+      - name: Commitar banco atualizado
+        run: |
+          git config user.name  "radar-cpsi-bot"
+          git config user.email "actions@github.com"
+          git add data/radar_cpsi.db
+          if git diff --cached --quiet; then
+            echo "Nenhuma mudança no banco — nada a commitar."
+          else
+            git commit -m "chore(data): atualiza banco de editais [skip ci] ($(date -u +%Y-%m-%d))"
+            git push
+          fi

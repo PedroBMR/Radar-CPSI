@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+*.local
+
+# Testing / tooling
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backfill checkpoint (local runtime state, not versioned)
+data/checkpoints/
+
+# NOTE: data/radar_cpsi.db is intentionally NOT ignored.
+# The SQLite database is versioned in the repository on purpose.
